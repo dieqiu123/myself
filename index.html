@@ -870,19 +870,30 @@ function fadeAudio(el,from,to,duration,stopAfter){
 
 var audioActivated=false;
 
+// 微信/QQ 音频解锁：强制加载 + 短暂播放 + 暂停（欺骗浏览器的音频限制）
+function unlockAudio(){
+  [trackRain, trackLawrence].forEach(function(t){
+    t.load();t.volume=0.001;
+    var p=t.play();
+    if(p&&p.then){p.then(function(){t.pause();t.currentTime=0;t.volume=0}).catch(function(){})}
+  });
+}
+
 function toggleMute(){
   var btn=document.getElementById('musicBtn');
 
-  // 第一次点击 → 激活音频（微信/移动端要求用户手势）
+  // 第一次点击 → 解锁 + 激活音频（微信/QQ/移动端要求用户手势内完成）
   if(!audioActivated){
     audioActivated=true;
+
+    // 先解锁音频引擎
+    unlockAudio();
 
     function startRain(){
       trackRain.volume=0;
       trackRain.play().then(function(){
         rainPlaying=true;fadeAudio(trackRain,0,RAIN_VOL,2000);
       }).catch(function(e){
-        // 微信静默失败 → 提示再点一次
         audioActivated=false;
         btn.textContent='♫ 再点一次';
         setTimeout(function(){if(!audioActivated) btn.textContent='♫ 音乐'},2000);
@@ -899,17 +910,18 @@ function toggleMute(){
       });
     }
 
-    // WeChat 环境检测 & 音频解锁
-    if(rainReady){startRain()}
-    else if(lawrenceReady){startLawrence()}
-    else {
-      // 音频还没加载完
-      btn.textContent='♫ 加载中…';
-      var check=setInterval(function(){
-        if(rainReady){clearInterval(check);startRain()}
-        else if(lawrenceReady){clearInterval(check);startLawrence()}
-      },300);
-    }
+    // 延迟 150ms 确保解锁完成再播放
+    setTimeout(function(){
+      if(rainReady){startRain()}
+      else if(lawrenceReady){startLawrence()}
+      else {
+        btn.textContent='♫ 加载中…';
+        var check=setInterval(function(){
+          if(rainReady){clearInterval(check);startRain()}
+          else if(lawrenceReady){clearInterval(check);startLawrence()}
+        },300);
+      }
+    },150);
 
     btn.classList.add('on');btn.classList.remove('muted');
     btn.setAttribute('aria-pressed','true');
