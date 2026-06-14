@@ -76,7 +76,9 @@ body{
 .topbar{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:20px var(--pad);pointer-events:none;opacity:0;transition:opacity .9s var(--ease)}
 .topbar.on{opacity:1}
 .topbar__brand{font-family:var(--mono);font-size:9px;letter-spacing:.3em;color:var(--paper-faint)}
-.topbar__music{pointer-events:auto;background:none;border:1px solid var(--gold-dim);color:var(--gold-amber);padding:8px 20px;cursor:pointer;font-family:var(--mono);font-size:10px;letter-spacing:.2em;transition:all .5s var(--ease)}
+.topbar__music{pointer-events:auto;background:none;border:1px solid var(--gold-dim);color:var(--gold-amber);padding:8px 20px;cursor:pointer;font-family:var(--mono);font-size:10px;letter-spacing:.2em;transition:all .5s var(--ease);animation:musicHint 3s ease-in-out 3}
+.topbar__music.on{animation:none}
+@keyframes musicHint{0%,100%{border-color:var(--gold-dim);box-shadow:0 0 0 rgba(184,146,62,0)}50%{border-color:var(--gold-amber);box-shadow:0 0 12px rgba(184,146,62,.25)}}
 .topbar__music:hover{border-color:var(--gold-amber);color:var(--paper)}
 .topbar__music.on{background:var(--vermillion-dim);border-color:var(--vermillion-dim);color:var(--paper)}
 .topbar__music.muted{background:transparent;border-color:rgba(212,207,199,.1);color:var(--paper-faint)}
@@ -269,7 +271,7 @@ p.lead{font-size:clamp(19px,2.2vw,24px);line-height:1.9;color:var(--paper)}
 <!-- ═══════ CHROME ═══════ -->
 <header class="topbar" id="topbar">
   <span class="topbar__brand">自述</span>
-  <button class="topbar__music" id="musicBtn" onclick="toggleMute()" aria-pressed="false">♫</button>
+  <button class="topbar__music" id="musicBtn" onclick="toggleMute()" aria-pressed="false">♫ 音乐</button>
 </header>
 
 <!-- ═══════ AUDIO ═══════ -->
@@ -862,9 +864,30 @@ function fadeAudio(el,from,to,duration,stopAfter){
   },stepMs);
 }
 
+var audioActivated=false;
+
 function toggleMute(){
-  muted=!muted;
   var btn=document.getElementById('musicBtn');
+
+  // 第一次点击 → 激活音频（微信要求用户手势）
+  if(!audioActivated){
+    audioActivated=true;
+    // 先播放 Rain（序章氛围）
+    if(rainReady){
+      trackRain.volume=0;
+      trackRain.play().then(function(){rainPlaying=true;fadeAudio(trackRain,0,RAIN_VOL,2000)}).catch(function(){});
+    } else if(lawrenceReady){
+      trackLawrence.volume=0;
+      trackLawrence.play().then(function(){lawrencePlaying=true;fadeAudio(trackLawrence,0,LAW_VOL,2500)}).catch(function(){});
+    }
+    btn.classList.add('on');btn.classList.remove('muted');
+    btn.setAttribute('aria-pressed','true');
+    btn.textContent='♫';
+    return;
+  }
+
+  // 之后点击 → 切换静音
+  muted=!muted;
   if(muted){
     btn.classList.add('muted');btn.classList.remove('on');
     btn.setAttribute('aria-pressed','false');
@@ -1043,7 +1066,6 @@ function startSynthFallback(){
     },350);
     setTimeout(function(){c.style.display='none';ld.style.display='none'},1000);
     setTimeout(function(){
-      activateAudio();
       collect();scroll();updateInkAndButterfly();
     },1300);
   }
