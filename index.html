@@ -925,7 +925,7 @@ function toggleMute(){
 
 // ── 音乐锚点：按滚动百分比切换 ──
 function musicAnchor(pct){
-  if(muted) return;
+  if(muted||!audioActivated) return;
   // 序 (0-12%): Rain | 主体 (12-92%): Lawrence | 后记 (92%+): Rain
   var wantRain=(pct<.12||pct>.92);
   if(wantRain && !rainPlaying){
@@ -947,6 +947,7 @@ function stopTrack(track){
 
 
 function startJourney(){
+  audioActivated=true;
   var overlay=document.getElementById('journeyOverlay');
   var btn=document.getElementById('musicBtn');
   overlay.classList.add('hidden');
