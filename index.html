@@ -926,14 +926,16 @@ function toggleMute(){
 // ── 音乐锚点：按滚动百分比切换 ──
 function musicAnchor(pct){
   if(muted) return;
-  // Rain锚点：第一章末(22-28%) + 后记起(92%+)，其余Lawrence
-  var wantRain=(pct>.22&&pct<.28)||pct>.92;
+  // 序 (0-12%): Rain | 主体 (12-92%): Lawrence | 后记 (92%+): Rain
+  var wantRain=(pct<.12||pct>.92);
   if(wantRain && !rainPlaying){
+    rainPlaying=true; // 先设标志防重入
     if(lawrencePlaying){stopTrack(trackLawrence);lawrencePlaying=false;}
-    if(trackRain){trackRain.volume=0;trackRain.play().then(function(){rainPlaying=true;fadeAudio(trackRain,0,RAIN_VOL,1500)}).catch(function(){});}
+    if(trackRain){trackRain.volume=0;trackRain.play().then(function(){fadeAudio(trackRain,0,RAIN_VOL,1500)}).catch(function(){rainPlaying=false;});}
   } else if(!wantRain && !lawrencePlaying){
+    lawrencePlaying=true;
     if(rainPlaying){stopTrack(trackRain);rainPlaying=false;}
-    if(trackLawrence){trackLawrence.volume=0;trackLawrence.play().then(function(){lawrencePlaying=true;fadeAudio(trackLawrence,0,LAW_VOL,2500)}).catch(function(){});}
+    if(trackLawrence){trackLawrence.volume=0;trackLawrence.play().then(function(){fadeAudio(trackLawrence,0,LAW_VOL,2500)}).catch(function(){lawrencePlaying=false;});}
   }
 }
 
@@ -951,10 +953,11 @@ function startJourney(){
   btn.classList.add('on');btn.setAttribute('aria-pressed','true');btn.textContent='♫';
   // 只播 Rain，不 fallback
   if(trackRain){
+    rainPlaying=true;
     trackRain.volume=0;
     trackRain.play().then(function(){
-      rainPlaying=true;fadeAudio(trackRain,0,RAIN_VOL,2000);
-    }).catch(function(){});
+      fadeAudio(trackRain,0,RAIN_VOL,2000);
+    }).catch(function(){rainPlaying=false;});
   }
 }
 
