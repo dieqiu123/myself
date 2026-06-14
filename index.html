@@ -855,7 +855,6 @@ p.lead{font-size:clamp(19px,2.2vw,24px);line-height:1.9;color:var(--paper)}
 // ═══════ AUDIO — Rain书挡 + Lawrence主段 ═══════
 var muted=false, lawrenceReady=false, rainReady=false;
 var lawrencePlaying=false, rainPlaying=false;
-var currentChapter='preface';
 var LAW_VOL=0.32, RAIN_VOL=0.30;
 
 var trackLawrence=document.getElementById('trackLawrence');
@@ -915,21 +914,19 @@ function toggleMute(){
   }
 }
 
-// ── Chapter detection for music switching ──
-var chapterObserver=new IntersectionObserver(function(entries){
-  var best=null,bestRatio=0;
-  document.querySelectorAll('[data-chapter]').forEach(function(el){
-    var r=el.getBoundingClientRect(),wh=window.innerHeight;
-    var v=Math.max(0,Math.min(r.bottom,wh)-Math.max(r.top,0))/Math.min(r.height,wh);
-    if(v>bestRatio){bestRatio=v;best=el}
-  });
-  if(best&&best.dataset.chapter!==currentChapter){
-    currentChapter=best.dataset.chapter;
-    handleChapterChange();
+// ── 音乐锚点：按滚动百分比切换 ──
+function musicAnchor(pct){
+  if(muted) return;
+  // 0-12% → Rain | 12-80% → Lawrence | 80%+ → Rain
+  var wantRain=(pct<.12||pct>.80);
+  if(wantRain && !rainPlaying){
+    if(lawrencePlaying){stopTrack(trackLawrence);lawrencePlaying=false;}
+    if(trackRain){trackRain.volume=0;trackRain.play().then(function(){rainPlaying=true;fadeAudio(trackRain,0,RAIN_VOL,1500)}).catch(function(){});}
+  } else if(!wantRain && !lawrencePlaying){
+    if(rainPlaying){stopTrack(trackRain);rainPlaying=false;}
+    if(trackLawrence){trackLawrence.volume=0;trackLawrence.play().then(function(){lawrencePlaying=true;fadeAudio(trackLawrence,0,LAW_VOL,2500)}).catch(function(){});}
   }
-},{threshold:[0,0.25,0.5,0.75,1]});
-
-document.querySelectorAll('[data-chapter]').forEach(function(el){chapterObserver.observe(el)});
+}
 
 function stopTrack(track){
   if(!track) return;
@@ -937,38 +934,6 @@ function stopTrack(track){
   track.pause();track.currentTime=0;track.volume=0;
 }
 
-function handleChapterChange(){
-  if(muted) return;
-  // Epilogue / Postscript → Rain only
-  if(currentChapter==='epilogue'||currentChapter==='postscript'){
-    if(lawrencePlaying){stopTrack(trackLawrence);lawrencePlaying=false;}
-    if(rainReady&&!rainPlaying){
-      trackRain.volume=0;
-      trackRain.play().then(function(){rainPlaying=true;fadeAudio(trackRain,0,RAIN_VOL,1500)}).catch(function(){});
-    }
-  }
-  // Preface / Chapters 1-5 → Lawrence only
-  else if(currentChapter==='preface'||currentChapter==='ch1'||currentChapter==='ch2'||currentChapter==='ch3'||currentChapter==='ch4'||currentChapter==='ch5'){
-    if(rainPlaying){stopTrack(trackRain);rainPlaying=false;}
-    if(lawrenceReady&&!lawrencePlaying){
-      trackLawrence.volume=0;
-      trackLawrence.play().then(function(){lawrencePlaying=true;fadeAudio(trackLawrence,0,LAW_VOL,2500)}).catch(function(){});
-    } else if(lawrencePlaying){
-      fadeAudio(trackLawrence,trackLawrence.volume,LAW_VOL,2500);
-    }
-  }
-}
-
-// ── Rain ended → Lawrence takes over (clean switch)
-trackRain.addEventListener('ended',function(){
-  rainPlaying=false;
-  if(!muted&&lawrenceReady&&!lawrencePlaying){
-    if(currentChapter==='preface'||currentChapter==='ch1'||currentChapter==='ch2'||currentChapter==='ch3'||currentChapter==='ch4'||currentChapter==='ch5'){
-      trackLawrence.volume=0;
-      trackLawrence.play().then(function(){lawrencePlaying=true;fadeAudio(trackLawrence,0,LAW_VOL,2500)}).catch(function(){});
-    }
-  }
-});
 
 function startJourney(){
   var overlay=document.getElementById('journeyOverlay');
@@ -1102,6 +1067,7 @@ function scroll(){
 function updateInkAndButterfly(){
   var st=window.scrollY,dh=Math.max(1,document.documentElement.scrollHeight-window.innerHeight);
   var pct=Math.min(st/dh,1);
+  musicAnchor(pct);
   var inkWarm=document.getElementById('inkWarm');
   if(inkWarm){
     var warmth=.05+.9*Math.max(0,Math.min(1,(pct-.25)/.55));
