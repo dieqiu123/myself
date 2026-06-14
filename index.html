@@ -893,30 +893,39 @@ function toggleMute(){
   if(!audioActivated){
     audioActivated=true;
 
-    // 用 new Audio() 动态创建 —— 微信对此限制较松
-    rainAudio = new Audio('https://cdn.jsdelivr.net/gh/dieqiu123/myself@main/weathering-with-you-rain.mp3');
+    // 先测微信是否允许音频 —— 用 Web Audio 生成 0.1s 测试音
+    var AC=window.AudioContext||window.webkitAudioContext;
+    var ctx=new AC();
+    var osc=ctx.createOscillator();
+    var gain=ctx.createGain();
+    osc.type='sine';osc.frequency.value=440;
+    gain.gain.setValueAtTime(0.05,ctx.currentTime);
+    gain.gain.linearRampToValueAtTime(0,ctx.currentTime+0.15);
+    osc.connect(gain);gain.connect(ctx.destination);
+    osc.start(ctx.currentTime);osc.stop(ctx.currentTime+0.15);
+
+    // 同时用 new Audio() 加载真实音频（同源路径，不用 CDN）
+    rainAudio = new Audio('weathering-with-you-rain.mp3');
     rainAudio.loop = true;
     rainAudio.volume = 0;
-    lawrenceAudio = new Audio('https://cdn.jsdelivr.net/gh/dieqiu123/myself@main/merry-christmas-mr-lawrence.mp3');
+    lawrenceAudio = new Audio('merry-christmas-mr-lawrence.mp3');
     lawrenceAudio.loop = true;
     lawrenceAudio.volume = 0;
 
-    // Rain 时间跳过静音
     rainAudio.addEventListener('timeupdate',function(){
       if(rainAudio.currentTime>67){rainAudio.currentTime=0}
     });
 
-    // 播放 Rain
     rainAudio.play().then(function(){
       rainPlaying=true;
-      trackRain=rainAudio;        // 替换 DOM 元素，后续代码照旧
-      trackLawrence=lawrenceAudio;
-      lawrenceReady=true; rainReady=true;
+      trackRain=rainAudio;trackLawrence=lawrenceAudio;
+      lawrenceReady=true;rainReady=true;
       fadeAudio(rainAudio,0,RAIN_VOL,2000);
+      btn.textContent='♫';
     }).catch(function(e){
       audioActivated=false;
-      btn.textContent='♫ 再点一次';
-      setTimeout(function(){if(!audioActivated) btn.textContent='♫ 音乐'},2000);
+      btn.textContent='♫ 加载中…';
+      setTimeout(function(){if(!audioActivated) btn.textContent='♫ 音乐'},3000);
     });
 
     btn.classList.add('on');btn.classList.remove('muted');
