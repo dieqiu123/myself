@@ -99,7 +99,7 @@ body{
 .stage__body{width:100%;max-width:var(--wide);margin:0 auto;padding:0 var(--pad);position:relative;z-index:2}
 /* 章节水印图 */
 /* ═══════ CHAPTER WATERMARK ═══════ */
-.stage[data-watermark] .stage__pin::before{
+.stage__pin[data-watermark]::before{
   content:attr(data-watermark);
   position:absolute;z-index:1;pointer-events:none;user-select:none;
   font-size:clamp(120px,25vw,260px);opacity:.09;color:var(--paper);
@@ -397,8 +397,8 @@ p.lead{font-size:clamp(19px,2.2vw,24px);line-height:1.9;color:var(--paper)}
 </section>
 
 <!-- ═══════ 序 ═══════ -->
-<section class="stage" style="height:90vh" data-chapter="preface" data-watermark="✦">
-  <div class="stage__pin">
+<section class="stage" style="height:90vh" data-chapter="preface">
+  <div class="stage__pin" data-watermark="✦">
     <div class="stage__body">
       <div class="ch-num fade" data-reveal>序</div>
       <div class="ch-label fade" data-reveal>Preface</div>
@@ -461,8 +461,8 @@ p.lead{font-size:clamp(19px,2.2vw,24px);line-height:1.9;color:var(--paper)}
 </section>
 
 <!-- ═══════ 第一章 · 分裂 ═══════ -->
-<section class="stage" style="height:90vh" data-chapter="ch1" data-watermark="❋">
-  <div class="stage__pin">
+<section class="stage" style="height:90vh" data-chapter="ch1">
+  <div class="stage__pin" data-watermark="❋">
     <div class="stage__body">
       <div class="ch-num fade" data-reveal>一</div>
       <div class="ch-label fade" data-reveal>第一章 · 分裂</div>
@@ -521,8 +521,8 @@ p.lead{font-size:clamp(19px,2.2vw,24px);line-height:1.9;color:var(--paper)}
 </div>
 
 <!-- ═══════ 第二章 · AI磨刀石 ═══════ -->
-<section class="stage" style="height:90vh" data-chapter="ch2" data-watermark="◆">
-  <div class="stage__pin">
+<section class="stage" style="height:90vh" data-chapter="ch2">
+  <div class="stage__pin" data-watermark="◆">
     <div class="stage__body">
       <div class="ch-num fade" data-reveal>二</div>
       <div class="ch-label fade" data-reveal>第二章 · 磨刀石</div>
@@ -590,8 +590,8 @@ p.lead{font-size:clamp(19px,2.2vw,24px);line-height:1.9;color:var(--paper)}
 </div>
 
 <!-- ═══════ 第三章 · 和解 ═══════ -->
-<section class="stage" style="height:90vh" data-chapter="ch3" data-watermark="○">
-  <div class="stage__pin">
+<section class="stage" style="height:90vh" data-chapter="ch3">
+  <div class="stage__pin" data-watermark="○">
     <div class="stage__body">
       <div class="ch-num fade" data-reveal>三</div>
       <div class="ch-label fade" data-reveal>第三章 · 和解</div>
@@ -648,8 +648,8 @@ p.lead{font-size:clamp(19px,2.2vw,24px);line-height:1.9;color:var(--paper)}
 </div>
 
 <!-- ═══════ 第四章 · 人机协作 ═══════ -->
-<section class="stage" style="height:90vh" data-chapter="ch4" data-watermark="⁂">
-  <div class="stage__pin">
+<section class="stage" style="height:90vh" data-chapter="ch4">
+  <div class="stage__pin" data-watermark="⁂">
     <div class="stage__body">
       <div class="ch-num fade" data-reveal>四</div>
       <div class="ch-label fade" data-reveal>第四章 · 人机协作</div>
@@ -690,8 +690,8 @@ p.lead{font-size:clamp(19px,2.2vw,24px);line-height:1.9;color:var(--paper)}
 </section>
 
 <!-- ═══════ 第五章 · 自由 ═══════ -->
-<section class="stage" style="height:90vh" data-chapter="ch5" data-watermark="⁘">
-  <div class="stage__pin">
+<section class="stage" style="height:90vh" data-chapter="ch5">
+  <div class="stage__pin" data-watermark="⁘">
     <div class="stage__body">
       <div class="ch-num fade" data-reveal>五</div>
       <div class="ch-label fade" data-reveal>第五章 · 自由</div>
@@ -730,8 +730,8 @@ p.lead{font-size:clamp(19px,2.2vw,24px);line-height:1.9;color:var(--paper)}
 </section>
 
 <!-- ═══════ 尾声 ═══════ -->
-<section class="stage" style="height:90vh" data-chapter="epilogue" data-watermark="—">
-  <div class="stage__pin">
+<section class="stage" style="height:90vh" data-chapter="epilogue">
+  <div class="stage__pin" data-watermark="—">
     <div class="stage__body" style="text-align:center">
       <div class="ch-num fade" data-reveal style="font-size:clamp(32px,4.5vw,56px);margin-bottom:20px">✦</div>
       <div class="ch-label fade" data-reveal>尾声</div>
