@@ -932,6 +932,7 @@ var chapterObserver=new IntersectionObserver(function(entries){
 document.querySelectorAll('[data-chapter]').forEach(function(el){chapterObserver.observe(el)});
 
 function stopTrack(track){
+  if(!track) return;
   if(track._fadeTimer){clearInterval(track._fadeTimer);track._fadeTimer=null;}
   track.pause();track.currentTime=0;track.volume=0;
 }
