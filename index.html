@@ -887,16 +887,12 @@ var audioActivated=false;
 function toggleMute(){
   var btn=document.getElementById('musicBtn');
 
-  // 第一次点击 → 激活音频（微信要求用户手势）
+  // 第一次点击 → 只播 Rain
   if(!audioActivated){
     audioActivated=true;
-    // 先播放 Rain（序章氛围）
-    if(rainReady){
+    if(trackRain){
       trackRain.volume=0;
       trackRain.play().then(function(){rainPlaying=true;fadeAudio(trackRain,0,RAIN_VOL,2000)}).catch(function(){});
-    } else if(lawrenceReady){
-      trackLawrence.volume=0;
-      trackLawrence.play().then(function(){lawrencePlaying=true;fadeAudio(trackLawrence,0,LAW_VOL,2500)}).catch(function(){});
     }
     btn.classList.add('on');btn.classList.remove('muted');
     btn.setAttribute('aria-pressed','true');
@@ -979,24 +975,12 @@ function startJourney(){
   var btn=document.getElementById('musicBtn');
   overlay.classList.add('hidden');
   btn.classList.add('on');btn.setAttribute('aria-pressed','true');btn.textContent='♫';
-
-  function playRain(){
-    if(!trackRain) return;
+  // 只播 Rain，不 fallback
+  if(trackRain){
     trackRain.volume=0;
     trackRain.play().then(function(){
       rainPlaying=true;fadeAudio(trackRain,0,RAIN_VOL,2000);
     }).catch(function(){});
-  }
-
-  if(rainReady){playRain()}
-  else{
-    // 等 Rain 加载
-    btn.textContent='♫ …';
-    var check=setInterval(function(){
-      if(rainReady){clearInterval(check);playRain();btn.textContent='♫'}
-    },300);
-    // 8 秒超时
-    setTimeout(function(){clearInterval(check);btn.textContent='♫'},8000);
   }
 }
 
