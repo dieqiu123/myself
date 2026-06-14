@@ -850,6 +850,10 @@ trackLawrence.addEventListener('canplaythrough',function(){lawrenceReady=true});
 trackLawrence.addEventListener('error',function(){});
 trackRain.addEventListener('canplaythrough',function(){rainReady=true});
 trackRain.addEventListener('error',function(){});
+// Rain 尾部静音跳过 → 67s处自动回到开头（无缝循环）
+trackRain.addEventListener('timeupdate',function(){
+  if(trackRain.currentTime>67){trackRain.currentTime=0}
+});
 
 function fadeAudio(el,from,to,duration,stopAfter){
   var steps=30,stepMs=duration/steps,delta=(to-from)/steps,i=0;
