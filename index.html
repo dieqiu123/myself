@@ -889,60 +889,37 @@ function fadeAudio(el,from,to,duration,stopAfter){
 }
 
 var audioActivated=false;
-var rainAudio=null, lawrenceAudio=null;
-
-function startAudio(){
-  if(audioActivated) return;
-  audioActivated=true;
-  var btn=document.getElementById('musicBtn');
-  btn.textContent='♫ …';
-
-  rainAudio = new Audio('weathering-with-you-rain.mp3');
-  rainAudio.loop = true; rainAudio.volume = 0;
-  lawrenceAudio = new Audio('merry-christmas-mr-lawrence.mp3');
-  lawrenceAudio.loop = true; lawrenceAudio.volume = 0;
-
-  rainAudio.addEventListener('timeupdate',function(){
-    if(rainAudio.currentTime>67){rainAudio.currentTime=0}
-  });
-
-  // 等音频加载完再播，超时 8s 放弃不阻塞页面
-  var loaded=false;
-  function go(){
-    if(loaded) return; loaded=true;
-    rainAudio.play().then(function(){
-      rainPlaying=true;
-      trackRain=rainAudio;trackLawrence=lawrenceAudio;
-      lawrenceReady=true;rainReady=true;
-      fadeAudio(rainAudio,0,RAIN_VOL,2000);
-      btn.classList.add('on');btn.setAttribute('aria-pressed','true');btn.textContent='♫';
-    }).catch(function(){
-      // 静默失败，不影响页面
-    });
-  }
-  if(rainAudio.readyState>=3){go()}
-  else{rainAudio.addEventListener('canplaythrough',go,{once:true})}
-  setTimeout(function(){if(!loaded){go();audioActivated=false;btn.textContent='♫'}},8000);
-}
 
 function toggleMute(){
   var btn=document.getElementById('musicBtn');
 
   // 第一次点击 → 激活音频
-  if(!audioActivated){startAudio();return;}
+  if(!audioActivated){
+    audioActivated=true;
+    if(rainReady){
+      trackRain.volume=0;
+      trackRain.play().then(function(){rainPlaying=true;fadeAudio(trackRain,0,RAIN_VOL,2000)}).catch(function(){audioActivated=false});
+    } else if(lawrenceReady){
+      trackLawrence.volume=0;
+      trackLawrence.play().then(function(){lawrencePlaying=true;fadeAudio(trackLawrence,0,LAW_VOL,2500)}).catch(function(){audioActivated=false});
+    }
+    btn.classList.add('on');btn.classList.remove('muted');
+    btn.setAttribute('aria-pressed','true');btn.textContent='♫';
+    return;
+  }
 
   // 之后点击 → 切换静音
   muted=!muted;
   if(muted){
     btn.classList.add('muted');btn.classList.remove('on');
     btn.setAttribute('aria-pressed','false');
-    if(lawrencePlaying) fadeAudio(trackLawrence,trackLawrence.volume,0,800);
-    if(rainPlaying) fadeAudio(trackRain,trackRain.volume,0,800);
+    if(lawrencePlaying&&trackLawrence) fadeAudio(trackLawrence,trackLawrence.volume,0,800);
+    if(rainPlaying&&trackRain) fadeAudio(trackRain,trackRain.volume,0,800);
   } else {
     btn.classList.remove('muted');btn.classList.add('on');
     btn.setAttribute('aria-pressed','true');
-    if(lawrencePlaying) fadeAudio(trackLawrence,trackLawrence.volume,LAW_VOL,1200);
-    if(rainPlaying) fadeAudio(trackRain,trackRain.volume,RAIN_VOL,1200);
+    if(lawrencePlaying&&trackLawrence) fadeAudio(trackLawrence,trackLawrence.volume,LAW_VOL,1200);
+    if(rainPlaying&&trackRain) fadeAudio(trackRain,trackRain.volume,RAIN_VOL,1200);
   }
 }
 
