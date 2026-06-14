@@ -899,8 +899,10 @@ function startAudio(){
     if(rainAudio.currentTime>67){rainAudio.currentTime=0}
   });
 
-  // 等音频加载完再播（手机网络慢时需要）
+  // 等音频加载完再播，超时 8s 放弃不阻塞页面
+  var loaded=false;
   function go(){
+    if(loaded) return; loaded=true;
     rainAudio.play().then(function(){
       rainPlaying=true;
       trackRain=rainAudio;trackLawrence=lawrenceAudio;
@@ -908,11 +910,12 @@ function startAudio(){
       fadeAudio(rainAudio,0,RAIN_VOL,2000);
       btn.classList.add('on');btn.setAttribute('aria-pressed','true');btn.textContent='♫';
     }).catch(function(){
-      audioActivated=false;btn.textContent='♫ 音乐';
+      // 静默失败，不影响页面
     });
   }
   if(rainAudio.readyState>=3){go()}
   else{rainAudio.addEventListener('canplaythrough',go,{once:true})}
+  setTimeout(function(){if(!loaded){go();audioActivated=false;btn.textContent='♫'}},8000);
 }
 
 function toggleMute(){
@@ -920,12 +923,6 @@ function toggleMute(){
 
   // 第一次点击 → 激活音频
   if(!audioActivated){startAudio();return;}
-
-    btn.classList.add('on');btn.classList.remove('muted');
-    btn.setAttribute('aria-pressed','true');
-    btn.textContent='♫';
-    return;
-  }
 
   // 之后点击 → 切换静音
   muted=!muted;
