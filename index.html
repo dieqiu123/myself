@@ -286,7 +286,7 @@ p.lead{font-size:clamp(19px,2.2vw,24px);line-height:1.9;color:var(--paper)}
 <audio id="trackLawrence" preload="auto">
   <source src="merry-christmas-mr-lawrence.mp3" type="audio/mpeg">
 </audio>
-<audio id="trackRain" preload="auto">
+<audio id="trackRain" loop preload="auto">
   <source src="weathering-with-you-rain.mp3" type="audio/mpeg">
 </audio>
 
@@ -864,6 +864,10 @@ trackLawrence.addEventListener('canplaythrough',function(){lawrenceReady=true});
 trackLawrence.addEventListener('error',function(){});
 trackRain.addEventListener('canplaythrough',function(){rainReady=true});
 trackRain.addEventListener('error',function(){});
+// Rain 循环优化：67s 后自动跳回开头（跳过尾部静音）
+trackRain.addEventListener('timeupdate',function(){
+  if(trackRain.currentTime>67){trackRain.currentTime=0}
+});
 
 function fadeAudio(el,from,to,duration,stopAfter){
   var steps=30,stepMs=duration/steps,delta=(to-from)/steps,i=0;
