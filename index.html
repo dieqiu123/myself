@@ -95,7 +95,7 @@ body{
 .fade.on{opacity:1;transform:translateY(0)}
 
 /* ═══════ TYPOGRAPHY ═══════ */
-p{font-size:clamp(17px,2vw,20px);line-height:2.3;color:rgba(212,207,199,.78);margin-bottom:20px}
+p{font-size:clamp(17px,2.2vw,22px);line-height:2.3;color:rgba(212,207,199,.78);margin-bottom:20px}
 p.soft{color:var(--paper-dim);font-size:13px;font-style:italic}
 p.em{color:var(--paper);font-weight:600}
 p.lead{font-size:clamp(19px,2.2vw,24px);line-height:1.9;color:var(--paper)}
@@ -278,7 +278,7 @@ p.lead{font-size:clamp(19px,2.2vw,24px);line-height:1.9;color:var(--paper)}
 <audio id="trackLawrence" loop preload="auto">
   <source src="merry-christmas-mr-lawrence.mp3" type="audio/mpeg">
 </audio>
-<audio id="trackRain" preload="auto">
+<audio id="trackRain" loop preload="auto">
   <source src="weathering-with-you-rain.mp3" type="audio/mpeg">
 </audio>
 
@@ -869,17 +869,44 @@ var audioActivated=false;
 function toggleMute(){
   var btn=document.getElementById('musicBtn');
 
-  // 第一次点击 → 激活音频（微信要求用户手势）
+  // 第一次点击 → 激活音频（微信/移动端要求用户手势）
   if(!audioActivated){
     audioActivated=true;
-    // 先播放 Rain（序章氛围）
-    if(rainReady){
+
+    function startRain(){
       trackRain.volume=0;
-      trackRain.play().then(function(){rainPlaying=true;fadeAudio(trackRain,0,RAIN_VOL,2000)}).catch(function(){});
-    } else if(lawrenceReady){
-      trackLawrence.volume=0;
-      trackLawrence.play().then(function(){lawrencePlaying=true;fadeAudio(trackLawrence,0,LAW_VOL,2500)}).catch(function(){});
+      trackRain.play().then(function(){
+        rainPlaying=true;fadeAudio(trackRain,0,RAIN_VOL,2000);
+      }).catch(function(e){
+        // 微信静默失败 → 提示再点一次
+        audioActivated=false;
+        btn.textContent='♫ 再点一次';
+        setTimeout(function(){if(!audioActivated) btn.textContent='♫ 音乐'},2000);
+      });
     }
+    function startLawrence(){
+      trackLawrence.volume=0;
+      trackLawrence.play().then(function(){
+        lawrencePlaying=true;fadeAudio(trackLawrence,0,LAW_VOL,2500);
+      }).catch(function(e){
+        audioActivated=false;
+        btn.textContent='♫ 再点一次';
+        setTimeout(function(){if(!audioActivated) btn.textContent='♫ 音乐'},2000);
+      });
+    }
+
+    // WeChat 环境检测 & 音频解锁
+    if(rainReady){startRain()}
+    else if(lawrenceReady){startLawrence()}
+    else {
+      // 音频还没加载完
+      btn.textContent='♫ 加载中…';
+      var check=setInterval(function(){
+        if(rainReady){clearInterval(check);startRain()}
+        else if(lawrenceReady){clearInterval(check);startLawrence()}
+      },300);
+    }
+
     btn.classList.add('on');btn.classList.remove('muted');
     btn.setAttribute('aria-pressed','true');
     btn.textContent='♫';
