@@ -195,15 +195,25 @@ p.lead{font-size:clamp(19px,2.2vw,24px);line-height:1.9;color:var(--paper)}
 
 /* ═══════ CUTE DOODLES & SPARKLES ═══════ */
 .doodle-container{position:fixed;inset:0;z-index:45;pointer-events:none;overflow:hidden}
-.doodle{position:absolute;font-size:clamp(12px,1.8vw,20px);opacity:0;will-change:transform,opacity;animation:floatUp 10s ease-in infinite}
-.doodle:nth-child(1){left:3%;animation-delay:0s;animation-duration:11s}
-.doodle:nth-child(2){left:95%;animation-delay:3s;animation-duration:13s}
-.doodle:nth-child(3){left:7%;animation-delay:6s;animation-duration:10s}
-.doodle:nth-child(4){left:90%;animation-delay:1s;animation-duration:12s}
-.doodle:nth-child(5){left:5%;animation-delay:8s;animation-duration:14s}
-.doodle:nth-child(6){left:93%;animation-delay:4s;animation-duration:11s}
-.doodle:nth-child(7){left:4%;animation-delay:9s;animation-duration:15s}
-.doodle:nth-child(8){left:96%;animation-delay:2s;animation-duration:12s}
+.doodle{position:absolute;font-size:clamp(10px,1.5vw,18px);opacity:0;color:rgba(200,165,100,.45);will-change:transform,opacity;animation:floatUp 12s ease-in infinite}
+.doodle:nth-child(1){left:2%;animation-delay:0s;animation-duration:13s}
+.doodle:nth-child(2){left:92%;animation-delay:2s;animation-duration:11s}
+.doodle:nth-child(3){left:6%;animation-delay:4s;animation-duration:15s}
+.doodle:nth-child(4){left:88%;animation-delay:1s;animation-duration:14s}
+.doodle:nth-child(5){left:4%;animation-delay:7s;animation-duration:12s}
+.doodle:nth-child(6){left:95%;animation-delay:3s;animation-duration:16s}
+.doodle:nth-child(7){left:8%;animation-delay:5s;animation-duration:10s}
+.doodle:nth-child(8){left:90%;animation-delay:9s;animation-duration:13s}
+.doodle:nth-child(9){left:3%;animation-delay:11s;animation-duration:14s}
+.doodle:nth-child(10){left:94%;animation-delay:6s;animation-duration:12s}
+.doodle:nth-child(11){left:5%;animation-delay:8s;animation-duration:15s}
+.doodle:nth-child(12){left:85%;animation-delay:10s;animation-duration:11s}
+.doodle:nth-child(13){left:7%;animation-delay:2.5s;animation-duration:13s}
+.doodle:nth-child(14){left:91%;animation-delay:5.5s;animation-duration:14s}
+.doodle:nth-child(15){left:1%;animation-delay:8.5s;animation-duration:12s}
+.doodle:nth-child(16){left:93%;animation-delay:3.5s;animation-duration:16s}
+.doodle:nth-child(17){left:6%;animation-delay:6.5s;animation-duration:11s}
+.doodle:nth-child(18){left:87%;animation-delay:9.5s;animation-duration:15s}
 @keyframes floatUp{0%{opacity:0;transform:translateY(105vh) translateX(0) rotate(0deg) scale(.45)}6%{opacity:.3}12%{opacity:.4;transform:translateY(70vh) translateX(4px) rotate(4deg) scale(.6)}50%{opacity:.25}88%{opacity:.15}100%{opacity:0;transform:translateY(-8vh) translateX(-6px) rotate(18deg) scale(.85)}}
 
 /* ═══════ DANMAKU · B站风格 ═══════ */
@@ -248,9 +258,12 @@ p.lead{font-size:clamp(19px,2.2vw,24px);line-height:1.9;color:var(--paper)}
 
 <!-- ═══════ DOODLES + DANMAKU ═══════ -->
 <div class="doodle-container" aria-hidden="true">
-  <span class="doodle">🌸</span><span class="doodle">✨</span><span class="doodle">🍃</span>
-  <span class="doodle">💫</span><span class="doodle">🎐</span><span class="doodle">⭐</span>
-  <span class="doodle">💭</span><span class="doodle">🌿</span>
+  <span class="doodle">✦</span><span class="doodle">✧</span><span class="doodle">❋</span>
+  <span class="doodle">◆</span><span class="doodle">✧</span><span class="doodle">✦</span>
+  <span class="doodle">◇</span><span class="doodle">❋</span><span class="doodle">✧</span>
+  <span class="doodle">✦</span><span class="doodle">◆</span><span class="doodle">❀</span>
+  <span class="doodle">✧</span><span class="doodle">✦</span><span class="doodle">❋</span>
+  <span class="doodle">◇</span><span class="doodle">✧</span><span class="doodle">◆</span>
 </div>
 <div class="danmaku-layer" id="danmakuLayer" aria-hidden="true"></div>
 
@@ -870,43 +883,41 @@ function fadeAudio(el,from,to,duration,stopAfter){
 
 var audioActivated=false;
 
+// 微信/移动端：动态创建 Audio 对象比 <audio> 标签更可靠
+var rainAudio=null, lawrenceAudio=null;
+
 function toggleMute(){
   var btn=document.getElementById('musicBtn');
 
-  // 第一次点击 → 激活音频
+  // 第一次点击 → 动态创建音频 + 激活（微信要求用户手势内创建+播放）
   if(!audioActivated){
     audioActivated=true;
 
-    function startRain(){
-      trackRain.volume=0;
-      trackRain.play().then(function(){
-        rainPlaying=true;fadeAudio(trackRain,0,RAIN_VOL,2000);
-      }).catch(function(e){
-        audioActivated=false;
-        btn.textContent='♫ 再点一次';
-        setTimeout(function(){if(!audioActivated) btn.textContent='♫ 音乐'},2000);
-      });
-    }
-    function startLawrence(){
-      trackLawrence.volume=0;
-      trackLawrence.play().then(function(){
-        lawrencePlaying=true;fadeAudio(trackLawrence,0,LAW_VOL,2500);
-      }).catch(function(e){
-        audioActivated=false;
-        btn.textContent='♫ 再点一次';
-        setTimeout(function(){if(!audioActivated) btn.textContent='♫ 音乐'},2000);
-      });
-    }
+    // 用 new Audio() 动态创建 —— 微信对此限制较松
+    rainAudio = new Audio('https://cdn.jsdelivr.net/gh/dieqiu123/myself@main/weathering-with-you-rain.mp3');
+    rainAudio.loop = true;
+    rainAudio.volume = 0;
+    lawrenceAudio = new Audio('https://cdn.jsdelivr.net/gh/dieqiu123/myself@main/merry-christmas-mr-lawrence.mp3');
+    lawrenceAudio.loop = true;
+    lawrenceAudio.volume = 0;
 
-    if(rainReady){startRain()}
-    else if(lawrenceReady){startLawrence()}
-    else {
-      btn.textContent='♫ 加载中…';
-      var check=setInterval(function(){
-        if(rainReady){clearInterval(check);startRain()}
-        else if(lawrenceReady){clearInterval(check);startLawrence()}
-      },300);
-    }
+    // Rain 时间跳过静音
+    rainAudio.addEventListener('timeupdate',function(){
+      if(rainAudio.currentTime>67){rainAudio.currentTime=0}
+    });
+
+    // 播放 Rain
+    rainAudio.play().then(function(){
+      rainPlaying=true;
+      trackRain=rainAudio;        // 替换 DOM 元素，后续代码照旧
+      trackLawrence=lawrenceAudio;
+      lawrenceReady=true; rainReady=true;
+      fadeAudio(rainAudio,0,RAIN_VOL,2000);
+    }).catch(function(e){
+      audioActivated=false;
+      btn.textContent='♫ 再点一次';
+      setTimeout(function(){if(!audioActivated) btn.textContent='♫ 音乐'},2000);
+    });
 
     btn.classList.add('on');btn.classList.remove('muted');
     btn.setAttribute('aria-pressed','true');
