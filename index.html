@@ -926,8 +926,8 @@ function toggleMute(){
 // ── 音乐锚点：按滚动百分比切换 ──
 function musicAnchor(pct){
   if(muted||!audioActivated) return;
-  // 序 (0-12%): Rain | 主体 (12-92%): Lawrence | 后记 (92%+): Rain
-  var wantRain=(pct<.12||pct>.92);
+  // 序~第一章 (0-25%): Rain | 第二~五章 (25-92%): Lawrence | 后记 (92%+): Rain
+  var wantRain=(pct<.25||pct>.92);
   if(wantRain && !rainPlaying){
     rainPlaying=true; // 先设标志防重入
     if(lawrencePlaying){stopTrack(trackLawrence);lawrencePlaying=false;}
