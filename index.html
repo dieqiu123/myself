@@ -857,18 +857,25 @@ var lawrencePlaying=false, rainPlaying=false;
 var currentChapter='preface';
 var LAW_VOL=0.32, RAIN_VOL=0.30;
 
-var trackLawrence=document.getElementById('trackLawrence');
-var trackRain=document.getElementById('trackRain');
-trackLawrence.addEventListener('canplaythrough',function(){lawrenceReady=true});
-trackLawrence.addEventListener('error',function(){});
-trackRain.addEventListener('canplaythrough',function(){rainReady=true});
-trackRain.addEventListener('error',function(){});
-// Rain 尾部静音跳过 → 67s处自动回到开头（无缝循环）
-trackRain.addEventListener('timeupdate',function(){
-  if(trackRain.currentTime>67){trackRain.currentTime=0}
-});
+var trackLawrence=null, trackRain=null;
+try{
+  trackLawrence=document.getElementById('trackLawrence');
+  trackRain=document.getElementById('trackRain');
+  if(trackLawrence){
+    trackLawrence.addEventListener('canplaythrough',function(){lawrenceReady=true});
+    trackLawrence.addEventListener('error',function(){});
+  }
+  if(trackRain){
+    trackRain.addEventListener('canplaythrough',function(){rainReady=true});
+    trackRain.addEventListener('error',function(){});
+    trackRain.addEventListener('timeupdate',function(){
+      if(trackRain.currentTime>67){trackRain.currentTime=0}
+    });
+  }
+}catch(e){}
 
 function fadeAudio(el,from,to,duration,stopAfter){
+  if(!el) return;
   var steps=30,stepMs=duration/steps,delta=(to-from)/steps,i=0;
   if(el._fadeTimer) clearInterval(el._fadeTimer);
   el._fadeTimer=setInterval(function(){
@@ -956,6 +963,7 @@ var chapterObserver=new IntersectionObserver(function(entries){
 document.querySelectorAll('[data-chapter]').forEach(function(el){chapterObserver.observe(el)});
 
 function stopTrack(track){
+  if(!track) return;
   if(track._fadeTimer){clearInterval(track._fadeTimer);track._fadeTimer=null;}
   track.pause();track.currentTime=0;track.volume=0;
 }
