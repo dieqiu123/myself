@@ -95,7 +95,7 @@ body{
 .fade.on{opacity:1;transform:translateY(0)}
 
 /* ═══════ TYPOGRAPHY ═══════ */
-p{font-size:clamp(17px,2.2vw,22px);line-height:2.3;color:rgba(212,207,199,.78);margin-bottom:20px}
+p{font-size:clamp(17px,2vw,20px);line-height:2.3;color:rgba(212,207,199,.78);margin-bottom:20px}
 p.soft{color:var(--paper-dim);font-size:13px;font-style:italic}
 p.em{color:var(--paper);font-weight:600}
 p.lead{font-size:clamp(19px,2.2vw,24px);line-height:1.9;color:var(--paper)}
@@ -235,7 +235,7 @@ p.lead{font-size:clamp(19px,2.2vw,24px);line-height:1.9;color:var(--paper)}
   :root{--pad:20px}
   .progress-bar{height:2px}
   .topbar{padding:14px 16px}
-  .hero h1{font-size:2.2rem}
+  .hero h1{font-size:1.7rem}
   p{font-size:15px;line-height:2.1}
   .stage__body{max-width:100%}
   .memo-block{padding:20px var(--pad)}.memo-line{font-size:10px;line-height:2.2;max-width:100%}
@@ -887,6 +887,8 @@ var rainAudio=null, lawrenceAudio=null;
 function startAudio(){
   if(audioActivated) return;
   audioActivated=true;
+  var btn=document.getElementById('musicBtn');
+  btn.textContent='♫ …';
 
   rainAudio = new Audio('weathering-with-you-rain.mp3');
   rainAudio.loop = true; rainAudio.volume = 0;
@@ -897,16 +899,20 @@ function startAudio(){
     if(rainAudio.currentTime>67){rainAudio.currentTime=0}
   });
 
-  rainAudio.play().then(function(){
-    rainPlaying=true;
-    trackRain=rainAudio;trackLawrence=lawrenceAudio;
-    lawrenceReady=true;rainReady=true;
-    fadeAudio(rainAudio,0,RAIN_VOL,2000);
-    var btn=document.getElementById('musicBtn');
-    btn.classList.add('on');btn.setAttribute('aria-pressed','true');btn.textContent='♫';
-  }).catch(function(){
-    audioActivated=false;
-  });
+  // 等音频加载完再播（手机网络慢时需要）
+  function go(){
+    rainAudio.play().then(function(){
+      rainPlaying=true;
+      trackRain=rainAudio;trackLawrence=lawrenceAudio;
+      lawrenceReady=true;rainReady=true;
+      fadeAudio(rainAudio,0,RAIN_VOL,2000);
+      btn.classList.add('on');btn.setAttribute('aria-pressed','true');btn.textContent='♫';
+    }).catch(function(){
+      audioActivated=false;btn.textContent='♫ 音乐';
+    });
+  }
+  if(rainAudio.readyState>=3){go()}
+  else{rainAudio.addEventListener('canplaythrough',go,{once:true})}
 }
 
 function toggleMute(){
