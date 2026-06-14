@@ -882,51 +882,38 @@ function fadeAudio(el,from,to,duration,stopAfter){
 }
 
 var audioActivated=false;
-
-// 微信/移动端：动态创建 Audio 对象比 <audio> 标签更可靠
 var rainAudio=null, lawrenceAudio=null;
+
+function startAudio(){
+  if(audioActivated) return;
+  audioActivated=true;
+
+  rainAudio = new Audio('weathering-with-you-rain.mp3');
+  rainAudio.loop = true; rainAudio.volume = 0;
+  lawrenceAudio = new Audio('merry-christmas-mr-lawrence.mp3');
+  lawrenceAudio.loop = true; lawrenceAudio.volume = 0;
+
+  rainAudio.addEventListener('timeupdate',function(){
+    if(rainAudio.currentTime>67){rainAudio.currentTime=0}
+  });
+
+  rainAudio.play().then(function(){
+    rainPlaying=true;
+    trackRain=rainAudio;trackLawrence=lawrenceAudio;
+    lawrenceReady=true;rainReady=true;
+    fadeAudio(rainAudio,0,RAIN_VOL,2000);
+    var btn=document.getElementById('musicBtn');
+    btn.classList.add('on');btn.setAttribute('aria-pressed','true');btn.textContent='♫';
+  }).catch(function(){
+    audioActivated=false;
+  });
+}
 
 function toggleMute(){
   var btn=document.getElementById('musicBtn');
 
-  // 第一次点击 → 动态创建音频 + 激活（微信要求用户手势内创建+播放）
-  if(!audioActivated){
-    audioActivated=true;
-
-    // 先测微信是否允许音频 —— 用 Web Audio 生成 0.1s 测试音
-    var AC=window.AudioContext||window.webkitAudioContext;
-    var ctx=new AC();
-    var osc=ctx.createOscillator();
-    var gain=ctx.createGain();
-    osc.type='sine';osc.frequency.value=440;
-    gain.gain.setValueAtTime(0.05,ctx.currentTime);
-    gain.gain.linearRampToValueAtTime(0,ctx.currentTime+0.15);
-    osc.connect(gain);gain.connect(ctx.destination);
-    osc.start(ctx.currentTime);osc.stop(ctx.currentTime+0.15);
-
-    // 同时用 new Audio() 加载真实音频（同源路径，不用 CDN）
-    rainAudio = new Audio('weathering-with-you-rain.mp3');
-    rainAudio.loop = true;
-    rainAudio.volume = 0;
-    lawrenceAudio = new Audio('merry-christmas-mr-lawrence.mp3');
-    lawrenceAudio.loop = true;
-    lawrenceAudio.volume = 0;
-
-    rainAudio.addEventListener('timeupdate',function(){
-      if(rainAudio.currentTime>67){rainAudio.currentTime=0}
-    });
-
-    rainAudio.play().then(function(){
-      rainPlaying=true;
-      trackRain=rainAudio;trackLawrence=lawrenceAudio;
-      lawrenceReady=true;rainReady=true;
-      fadeAudio(rainAudio,0,RAIN_VOL,2000);
-      btn.textContent='♫';
-    }).catch(function(e){
-      audioActivated=false;
-      btn.textContent='♫ 加载中…';
-      setTimeout(function(){if(!audioActivated) btn.textContent='♫ 音乐'},3000);
-    });
+  // 第一次点击 → 激活音频
+  if(!audioActivated){startAudio();return;}
 
     btn.classList.add('on');btn.classList.remove('muted');
     btn.setAttribute('aria-pressed','true');
@@ -1115,6 +1102,14 @@ function startSynthFallback(){
     setTimeout(function(){c.style.display='none';ld.style.display='none'},1000);
     setTimeout(function(){
       collect();scroll();updateInkAndButterfly();
+      // 桌面端自动播，移动端等用户首次触碰
+      var isMobile=/Mobi|Android|iPhone/i.test(navigator.userAgent);
+      if(!isMobile){startAudio()}
+      else{
+        var events=['click','scroll','touchstart'];
+        function tryStart(){startAudio();events.forEach(function(e){document.removeEventListener(e,tryStart)})}
+        events.forEach(function(e){document.addEventListener(e,tryStart,{once:true})})
+      }
     },1300);
   }
 
