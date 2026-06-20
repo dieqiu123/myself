@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>关于换电脑这件事 — 给爸妈的说明</title>
+<style>
+  :root {
+    --bg: #fafaf8;
+    --card: #fff;
+    --border: #e8e5e0;
+    --text: #2d2d2d;
+    --muted: #888;
+    --gold: #b8860b;
+    --green: #2d7d46;
+    --red: #c0392b;
+    --blue: #2c6faa;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 2;
+    padding: 30px 16px;
+  }
+  .paper { max-width: 700px; margin: 0 auto; }
+
+  h1 {
+    text-align: center;
+    font-size: 1.6rem;
+    margin-bottom: 6px;
+    color: #1a1a1a;
+  }
+  .date { text-align: center; color: var(--muted); font-size: 0.85rem; margin-bottom: 32px; }
+
+  .section {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 22px 24px;
+    margin-bottom: 18px;
+  }
+  .section h2 {
+    font-size: 1.1rem;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #f0ede5;
+  }
+
+  .big-num {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--green);
+  }
+  .red { color: var(--red); font-weight: 600; }
+
+  .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 14px 0; }
+  .compare > div { padding: 14px; border-radius: 8px; text-align: center; }
+  .old { background: #fff5f5; border: 1px solid #ffdcdc; }
+  .new { background: #f3faf5; border: 1px solid #c8e6d0; }
+  .old h3 { color: var(--red); font-size: 0.9rem; }
+  .new h3 { color: var(--green); font-size: 0.9rem; }
+  .compare .price { font-size: 1.2rem; font-weight: 700; margin: 6px 0; }
+
+  .calc { margin: 12px 0; }
+  .calc-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed var(--border); }
+  .calc-row.final { border-bottom: none; font-size: 1.15rem; font-weight: 700; color: var(--green); }
+
+  .reason { padding: 8px 0 8px 20px; border-left: 3px solid #f0ede5; margin: 6px 0; }
+
+  .btn {
+    display: block; text-align: center; padding: 14px; margin: 16px 0;
+    background: var(--gold); color: #fff; text-decoration: none;
+    border-radius: 8px; font-size: 1rem; font-weight: 600;
+  }
+  .btn:hover { background: #a07000; }
+
+  ul { padding-left: 20px; }
+  li { margin: 4px 0; }
+
+  hr { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+
+  dl { margin: 8px 0; }
+  dt { font-weight: 600; margin-top: 10px; color: #555; }
+  dd { margin-left: 16px; }
+
+  .highlight { background: #fffde8; padding: 12px 16px; border-radius: 8px; border-left: 4px solid var(--gold); margin: 12px 0; }
+</style>
+</head>
+<body>
+<div class="paper">
+
+<h1>📘 关于换电脑这件事</h1>
+<p class="date">给你们看这个是因为当面讲不清楚 · 2026 年 6 月</p>
+
+<!-- 一、现状 -->
+<div class="section">
+  <h2>一、现在这台电脑怎么了</h2>
+
+  <p>这台是 <strong>2018 年买的 MacBook Air</strong>，用了快 8 年了。</p>
+
+  <div class="highlight">
+    <strong>现在的状态：</strong>开机就卡、打开两个网页风扇狂转、终端（编程工具）经常崩溃闪退。
+    这两个月我在学 AI 编程，经常因为电脑死机浪费一两个小时重来。
+  </div>
+
+  <p>不是我用坏的，是它的硬件从出生那天起就<strong class="red">没法升级</strong>：</p>
+
+  <dl>
+    <dt>🧠 内存 8GB</dt>
+    <dd>相当于人的短期记忆。8GB 是 2018 年最低配，现在的手机都有 12GB。系统自己先吃掉一大半，剩下一丁点给软件用，不够了就卡死。</dd>
+
+    <dt>⚡ CPU 是平板电脑的芯片</dt>
+    <dd>这颗芯片代号是 Y 系列，原本是给 iPad 设计的，功耗只有 7 瓦。打个比方：别人车里装的是发动机，我车里装的是电动自行车的电机。</dd>
+
+    <dt>🔒 内存焊在主板上，不能加</dt>
+    <dd>台式机能自己买内存条插上去，这台不行。出厂 8GB，一辈子 8GB。</dd>
+
+    <dt>🔥 没有风扇散热</dt>
+    <dd>一发热就自动降速保护，越用越慢。</dd>
+  </dl>
+</div>
+
+<!-- 二、通俗比喻 -->
+<div class="section">
+  <h2>二、打个比方</h2>
+
+  <p style="font-size:1.1rem; text-align:center; padding:16px;">
+    🚲 <strong>我花了一万块，买了一辆自行车。</strong><br>
+    现在每天骑着它上高速跟汽车飙。<br>
+    它跑不动，不是路的问题，是它生来就没那个能力。
+  </p>
+</div>
+
+<!-- 三、对比 -->
+<div class="section">
+  <h2>三、新旧对比</h2>
+
+  <div class="compare">
+    <div class="old">
+      <h3>❌ 现在这台</h3>
+      <p>2018 MacBook Air</p>
+      <p>买价：¥10,000</p>
+      <p>内存：8GB（焊死）</p>
+      <p>芯片：平板级别</p>
+      <p>现状：卡、慢、崩</p>
+      <p class="price" style="color:var(--red)">现在卖掉 ≈ ¥1,000</p>
+    </div>
+    <div class="new">
+      <h3>✅ 要换的</h3>
+      <p>2025 MacBook Air M4</p>
+      <p>教育优惠价：¥5,949</p>
+      <p>内存：16GB（标配）</p>
+      <p>芯片：笔记本级别</p>
+      <p>预期：流畅用 5 年以上</p>
+      <p class="price" style="color:var(--green)">实际支出 ≈ ¥4,500</p>
+    </div>
+  </div>
+</div>
+
+<!-- 四、为什么现在买 -->
+<div class="section">
+  <h2>四、为什么必须现在换</h2>
+
+  <div class="reason">
+    <strong>🎓 1. 高考生优惠只有现在有</strong><br>
+    凭准考证在京东认证「教育优惠」，可以拿到学生折扣 + 国家补贴 15%。这个价格过了暑假就没了。
+  </div>
+
+  <div class="reason">
+    <strong>📚 2. 暑假在学 AI 编程，电脑是刚需</strong><br>
+    我这两个月在做的事情——AI 工具链开发、自动化流程——都依赖电脑。这个暑假的积累直接决定大学四年的起点。电脑天天崩，时间全浪费在修电脑上。
+  </div>
+
+  <div class="reason">
+    <strong>🎯 3. 大学四年就靠这一台</strong><br>
+    现在买一台，用到大学毕业。如果现在不换，到了大学迟早还是要换，那时候没有教育优惠，多花几千块。
+  </div>
+
+  <div class="reason">
+    <strong>💰 4. 旧电脑还能卖 1000 多块</strong><br>
+    趁现在还能开机卖掉回血。再拖下去，这个 2018 款就彻底不值钱了。
+  </div>
+</div>
+
+<!-- 五、费用明细 -->
+<div class="section">
+  <h2>五、费用明细</h2>
+
+  <div class="calc">
+    <div class="calc-row"><span>新电脑（京东教育价，已含所有优惠）</span><span>¥5,949</span></div>
+    <div class="calc-row"><span>卖掉旧电脑</span><span style="color:var(--green)">− ¥1,000 ~ 1,500</span></div>
+    <div class="calc-row final"><span>实际需要出的钱</span><span>≈ ¥4,500</span></div>
+  </div>
+
+  <div class="highlight" style="margin-top:14px;">
+    <strong>💡 这笔账换个角度看：</strong><br>
+    这台新电脑用 5 年，平均每天 <strong>不到 2.5 元</strong>。<br>
+    旧电脑继续用，每天浪费 1-2 小时在卡顿和崩溃上——时间比钱贵得多。
+  </div>
+
+  <p style="font-size:0.85rem; color:var(--muted); text-align:center; margin-top:10px;">
+    * 京东搜「教育优惠」→ 上传准考证 → 认证学生身份 → 领券 → 下单
+  </p>
+</div>
+
+<!-- 六、渠道 -->
+<div class="section">
+  <h2>六、去哪买</h2>
+  <p><strong>京东 App → 搜「教育优惠」→ 上传准考证照片 → 认证高考生身份</strong></p>
+  <p style="color:var(--muted);">认证通过后领 500 元学生券 + 国家 15% 补贴，M4 MacBook Air 到手 ¥5,949。</p>
+  <p style="margin-top:10px;">也可以去 Apple 官网教育商店（apple.com.cn/cn-edu），直接下单 ¥7,699，但比京东贵一千多。</p>
+</div>
+
+<hr>
+
+<p style="text-align:center; color:var(--muted); font-size:0.9rem;">
+  我这两个月用这台电脑非常难受，每天都花很多时间在等它反应。<br>
+  我真心觉得这是一笔合理的投资，大学四年靠它，值得。<br>
+  <span style="color:var(--red);">谢谢你们看完 ❤️</span>
+</p>
+
+</div>
+</body>
+</html>
