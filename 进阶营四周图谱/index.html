@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>进阶营·四周图谱</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;700;900&family=Noto+Sans+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  /* ===== 设计令牌 =====
+     概念：编辑杂志风——纸 + 墨 + 发丝线，一路朱红做点缀。
+     宋体大标题撑「讲义册」气质；等宽字体扛数据与栏目标签；
+     大量细线分隔替代卡片，密而不乱。单亮色主题。 */
+  :root {
+    color-scheme: light;
+    --paper: #FBFAF6;
+    --ink: #1B1B1E;
+    --ink2: #34353B;
+    --muted: #807B70;
+    --line: #E8E4D9;
+    --line-strong: #D7D2C3;
+    --accent: #B3202B;
+    --accent-soft: rgba(179,32,43,0.07);
+    --serif: "Noto Serif SC", "Songti SC", "STSong", serif;
+    --sans: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+    --mono: "JetBrains Mono", "SF Mono", Menlo, monospace;
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.85;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+  @page { margin: 17mm; }
+
+  .wrap { max-width: 820px; margin: 0 auto; padding-block: 60px 90px; }
+
+  /* —— 页眉 —— */
+  .masthead { padding-bottom: 30px; margin-bottom: 44px; border-bottom: 2px solid var(--ink); }
+  .eyebrow {
+    font-family: var(--mono); font-size: 13px; letter-spacing: 0.22em;
+    color: var(--accent); font-weight: 500;
+  }
+  h1.title {
+    font-family: var(--serif); font-weight: 900; font-size: 46px; line-height: 1.14;
+    margin: 14px 0 16px; letter-spacing: 0.01em; text-wrap: balance;
+  }
+  .thesis { color: var(--ink2); font-size: 17px; max-width: 62ch; margin: 0 0 28px; }
+  .folio { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 14px; font-family: var(--mono); font-size: 14px; }
+  .folio .n { font-weight: 700; font-size: 18px; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .folio .l { color: var(--muted); font-size: 12px; letter-spacing: 0.08em; margin-left: 3px; }
+  .folio .sep { color: var(--line-strong); }
+
+  /* —— 章节 —— */
+  .sec { margin-bottom: 52px; }
+  .sec-head { display: flex; align-items: baseline; gap: 10px; padding-bottom: 10px; border-bottom: 1px solid var(--line-strong); margin-bottom: 14px; }
+  .sec-head .k { font-family: var(--mono); font-size: 13px; color: var(--accent); letter-spacing: 0.08em; }
+  .sec-head h3 { font-family: var(--serif); font-weight: 900; font-size: 24px; margin: 0; }
+  .section-sub { color: var(--muted); font-size: 14px; margin: 0 0 22px; }
+
+  /* —— 课程地图 —— */
+  .flow { display: flex; flex-wrap: wrap; align-items: stretch; gap: 0; border-top: 1px solid var(--line-strong); border-bottom: 1px solid var(--line-strong); margin-bottom: 14px; }
+  .fstep { flex: 1 1 0; min-width: 160px; padding: 18px 16px 16px; border-right: 1px solid var(--line); }
+  .fstep:last-child { border-right: none; }
+  .fstep .fs-week { font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; color: var(--muted); }
+  .fstep .fs-name { font-family: var(--serif); font-weight: 900; font-size: 24px; margin: 6px 0 4px; color: var(--ink); }
+  .fstep .fs-date { font-family: var(--mono); font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .fstep .fs-out { font-size: 13px; color: var(--ink2); margin-top: 10px; line-height: 1.5; }
+  .fstep .fs-out span { display: inline-block; font-family: var(--mono); font-size: 10px; color: var(--accent); letter-spacing: 0.06em; margin-right: 6px; }
+  .flow-note { color: var(--muted); font-size: 13px; margin: 0; }
+  .flow-note b { color: var(--ink); font-weight: 500; }
+
+  /* —— 方法论 —— */
+  .method { margin-bottom: 52px; }
+  .method h3 { font-family: var(--serif); font-weight: 700; font-size: 18px; margin: 0 0 14px; }
+  .method ol { margin: 0; padding: 0; list-style: none; counter-reset: m; display: grid; gap: 12px; }
+  .method li { padding-left: 34px; position: relative; }
+  .method li::before { counter-increment: m; content: "0" counter(m); position: absolute; left: 0; top: 1px; font-family: var(--mono); font-size: 13px; color: var(--accent); font-weight: 500; }
+  .method li b { font-weight: 700; }
+
+  /* —— 每周 —— */
+  .week { margin-bottom: 54px; }
+  .week-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 16px; border-bottom: 1px solid var(--ink); padding-bottom: 14px; margin-bottom: 20px; }
+  .week-head .w-no { font-family: var(--mono); font-size: 13px; letter-spacing: 0.14em; color: var(--accent); font-weight: 500; }
+  .week-head h2 { font-family: var(--serif); font-weight: 900; font-size: 32px; margin: 0; line-height: 1.1; color: var(--ink); }
+  .week-head .w-date { font-family: var(--mono); color: var(--muted); font-size: 14px; font-variant-numeric: tabular-nums; }
+  .week-head .w-thesis { flex-basis: 100%; font-size: 15px; color: var(--ink2); margin-top: 6px; }
+
+  .meta { font-size: 13px; color: var(--muted); margin-bottom: 22px; }
+  .meta b { color: var(--ink); font-weight: 500; }
+
+  .block { margin-bottom: 22px; }
+  .block h4 {
+    font-family: var(--mono); font-size: 12px; letter-spacing: 0.14em;
+    color: var(--muted); font-weight: 500; margin: 0 0 12px;
+    display: flex; align-items: baseline; gap: 8px;
+  }
+  .block h4 .mk { color: var(--accent); }
+
+  .schedule { display: flex; flex-direction: column; border-top: 1px solid var(--line-strong); border-bottom: 1px solid var(--line-strong); }
+  .sched-row { display: flex; gap: 16px; padding: 11px 2px; align-items: baseline; border-bottom: 1px solid var(--line); }
+  .sched-row:last-child { border-bottom: none; }
+  .sched-row .day { flex: 0 0 auto; min-width: 76px; font-family: var(--mono); font-weight: 500; font-size: 12px; font-variant-numeric: tabular-nums; color: var(--ink); }
+  .sched-row .who { flex: 0 0 auto; font-family: var(--mono); font-size: 12px; color: var(--muted); }
+  .sched-row .what { font-size: 14px; color: var(--ink2); }
+
+  .hw { background: var(--accent-soft); border-left: 3px solid var(--accent); padding: 15px 18px; }
+  .hw p { margin: 0 0 6px; }
+  .hw .dl { font-size: 13px; color: var(--muted); }
+  .hw .dl b { color: var(--ink); font-weight: 500; }
+
+  .points { margin: 0; padding: 0; list-style: none; display: grid; gap: 10px; }
+  .points li { padding-left: 20px; position: relative; line-height: 1.8; color: var(--ink2); }
+  .points li::before { content: "—"; position: absolute; left: 0; color: var(--accent); font-family: var(--mono); }
+
+  /* —— 资料入口 —— */
+  .res { margin: 0; padding: 0; list-style: none; display: grid; gap: 5px; }
+  .res li { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px; }
+  .res a { color: var(--ink2); text-decoration: none; border-bottom: 1px solid var(--line-strong); }
+  .res a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+  .res a::before { content: "↗ "; color: var(--accent); font-family: var(--mono); font-size: 11px; }
+  .res .dom { font-family: var(--mono); font-size: 10px; color: var(--muted); letter-spacing: 0.04em; }
+  .res .res-sub { margin-top: 9px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; color: var(--muted); }
+  .res .res-sub:first-child { margin-top: 0; }
+  .res .file { color: var(--ink2); }
+  .res .file::before { content: "▤ "; color: var(--muted); font-family: var(--mono); font-size: 11px; }
+
+  .foot { border-top: 2px solid var(--ink); padding-top: 26px; color: var(--muted); font-size: 14px; }
+  .foot b { color: var(--ink); font-weight: 500; }
+
+  @media (max-width: 620px) {
+    .fstep { border-right: none; border-bottom: 1px solid var(--line); flex-basis: 100%; }
+    .fstep:last-child { border-bottom: none; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="eyebrow">2026 树成林 · 进阶营学习项目</div>
+    <h1 class="title">进阶营 · 四周图谱</h1>
+    <p class="thesis">一个多月的 AI 创作实战营，四周走完图片、技术、视频、文案四条路——每一条都从「先做出来」走到「能交付、能变现」。</p>
+    <div class="folio">
+      <span><span class="n">4</span><span class="l">周</span></span>
+      <span class="sep">/</span>
+      <span><span class="n">4</span><span class="l">方向</span></span>
+      <span class="sep">/</span>
+      <span><span class="n">8/8</span><span class="l">开营</span></span>
+      <span class="sep">/</span>
+      <span><span class="n">一个多月</span><span class="l">周期</span></span>
+    </div>
+  </header>
+
+  <section class="sec">
+    <div class="sec-head"><span class="k">01</span><h3>课程地图</h3></div>
+    <p class="section-sub">四周是一条真实序列——前一周的产出，就是后一周的原料。</p>
+    <div class="flow">
+      <div class="fstep">
+        <div class="fs-week">第 1 周</div>
+        <div class="fs-name">图片周</div>
+        <div class="fs-date">8/8–8/10</div>
+        <div class="fs-out"><span>产出</span>10 张高级感人像</div>
+      </div>
+      <div class="fstep">
+        <div class="fs-week">第 2 周</div>
+        <div class="fs-name">技术周</div>
+        <div class="fs-date">8/17–8/28</div>
+        <div class="fs-out"><span>产出</span>一个游戏 / 网站小程序</div>
+      </div>
+      <div class="fstep">
+        <div class="fs-week">第 3 周</div>
+        <div class="fs-name">视频周</div>
+        <div class="fs-date">8/28–9/5</div>
+        <div class="fs-out"><span>产出</span>一条约 1 分钟的 AI 视频</div>
+      </div>
+      <div class="fstep">
+        <div class="fs-week">第 4 周</div>
+        <div class="fs-name">文案周</div>
+        <div class="fs-date">9/7–9/15</div>
+        <div class="fs-out"><span>产出</span>一条配音成片</div>
+      </div>
+    </div>
+    <p class="flow-note"><b>递进</b>：图片周的人像 → 技术周当素材做游戏/网站；技术周学会的 Codex → 视频周的 coding 线；视频周的成片思路 → 文案周的配音成片。</p>
+  </section>
+
+  <section class="method">
+    <h3>贯穿四周的五条方法</h3>
+    <ol>
+      <li><b>迭代</b>——先做一版，再只改一个变量做出第二版，记下为什么变好或变差。</li>
+      <li><b>先完成再完美</b>——先发出去，再回来打磨。</li>
+      <li><b>站在观众/用户那一边</b>——作品要对「看到它的人」产生什么影响。</li>
+      <li><b>变现思维</b>——技术沉淀成作品集，作品集换订单、换流量。</li>
+      <li><b>用真实需求检验</b>——真客户、真单子、真发布，比自嗨更有反馈。</li>
+    </ol>
+  </section>
+
+  <!-- 第一周 -->
+  <section class="week">
+    <div class="week-head">
+      <span class="w-no">第 1 周</span>
+      <h2>图片周</h2>
+      <span class="w-date">8/8 – 8/10</span>
+      <div class="w-thesis">AI 人像生图 + 自动化写真工作流——用真实客户单子练手。</div>
+    </div>
+    <div class="meta"><b>讲师</b>　果粒（逐张点评）、洋（统筹）、白骐溶（人像生图）、山药Rheos（人像自动化）</div>
+
+    <div class="block">
+      <h4><span class="mk">—</span> 课程安排</h4>
+      <div class="schedule">
+        <div class="sched-row"><span class="day">Day 1</span><span class="who">白骐溶</span><span class="what">人像生图操作：基础生图、找参考图、初步后期，重点解决「人脸不像」。</span></div>
+        <div class="sched-row"><span class="day">Day 2</span><span class="who">山药Rheos</span><span class="what">人像自动化原理与操作（直播）：部署自动化写真工作流。</span></div>
+        <div class="sched-row"><span class="day">点评</span><span class="who">果粒</span><span class="what">逐张点评：皮肤质感、背景层次、构图、装饰是否挡脸、是否油光。</span></div>
+      </div>
+    </div>
+
+    <div class="block">
+      <h4><span class="mk">—</span> 讲义要点</h4>
+      <ul class="points">
+        <li>生图三步：找参考图 → AI 生图 → 初步后期。最大卡点是「人脸不像」，解法是拿客户本人照片垫图/做参考，先保住「像」、再谈「美」。</li>
+        <li>质感：皮肤避免油光与磨皮过度；背景要有层次，人、背景、文字三者拉开距离。</li>
+        <li>构图：装饰别截掉肩膀、别挡脸；形象照要先想清楚客户拿去干嘛（多为事业型女性，用于朋友圈与对外宣发）。</li>
+        <li>自动化：把「找参考 → 生图 → 后期」串成一条工作流，一次部署后给不同人批量出图。</li>
+      </ul>
+    </div>
+
+    <div class="block">
+      <h4><span class="mk">—</span> 作业</h4>
+      <div class="hw">
+        <p>① 结合客户要求，生成 10 张时尚高级感图片；</p>
+        <p>② 部署自动化写真工作流，给自己两位亲人作图。</p>
+        <p class="dl">提交：录屏 + 云文档展示作图流程。</p>
+      </div>
+    </div>
+
+    <div class="block">
+      <h4><span class="mk">—</span> 资料入口</h4>
+      <ul class="res">
+        <li><a href="https://kcnhysapsexw.feishu.cn/wiki/SmOzwz4YPiF2GSkJRPAcOZ10nQg" target="_blank" rel="noopener">人像生图课程 · 白骐溶 DAY1</a><span class="dom">feishu</span></li>
+        <li><a href="https://tcnuhzl5rczc.feishu.cn/wiki/IJc8w2bQ1iPUxkkPUCFcRD4xnyd" target="_blank" rel="noopener">人像自动化工作流 · 山药Rheos DAY2</a><span class="dom">feishu</span></li>
+        <li><a href="https://kcnhysapsexw.feishu.cn/wiki/Zd5SwU7ZUiJLT7k8Bs9cDWFJnhx" target="_blank" rel="noopener">讲解视频云文档 · 白骐溶</a><span class="dom">feishu</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 第二周 -->
+  <section class="week">
+    <div class="week-head">
+      <span class="w-no">第 2 周</span>
+      <h2>技术周</h2>
+      <span class="w-date">8/17 – 8/28</span>
+      <div class="w-thesis">用 Codex 做游戏、做网站小程序——从「复刻」到「能交付、能变现」。</div>
+    </div>
+    <div class="meta"><b>讲师</b>　云舒、江离（游戏）；水猫、长风破小浪、刘洋、纤依（网站）；果粒、郁芜·心澈（入门/工具）</div>
+
+    <div class="block">
+      <h4><span class="mk">—</span> 课程安排（DAY1 – DAY10）</h4>
+      <div class="schedule">
+        <div class="sched-row"><span class="day">Day 1–2</span><span class="who">云舒 · 江离</span><span class="what">游戏：两轮对话复刻休闲小程序；「搜打撤」类型游戏拆解。</span></div>
+        <div class="sched-row"><span class="day">Day 3–4</span><span class="who">长风破小浪 · 果粒</span><span class="what">网站入门：素材变成可滚动互动网页；零基础「七夕表白网站」。</span></div>
+        <div class="sched-row"><span class="day">Day 5–6</span><span class="who">刘洋</span><span class="what">网站审美：怎样让内容更打动人、画面更清楚地表达。</span></div>
+        <div class="sched-row"><span class="day">Day 7–8</span><span class="who">水猫</span><span class="what">案例研究到设计判断：GOOSE PLANET 案例拆解。</span></div>
+        <div class="sched-row"><span class="day">Day 9–10</span><span class="who">纤依</span><span class="what">让想法跑起来：把模糊想法做成最小可用网站/小程序。</span></div>
+      </div>
+    </div>
+
+    <div class="block">
+      <h4><span class="mk">—</span> 讲义要点</h4>
+      <ul class="points">
+        <li>游戏两条路：兴趣导向（做自己想玩的）vs 变现导向（做别人想用的）。变现要想清楚「用户为什么不玩打磨到位的成熟完整版」——你的差异点是题材或垂类 IP。</li>
+        <li>复刻思路：两轮对话让 Codex 复刻一个休闲小游戏；「搜打撤」拆成「搜、打、撤」三个阶段后逐个实现。</li>
+        <li>网站/小程序是技术变现的核心路径：把模糊想法做成最小可用产品，闲鱼技术组 29 人 15 天拿下 16000 元编程订单。</li>
+        <li>美工：对画面不满意，直接让 Codex 用 Image2 生成并统一整套美术风格，避免风格割裂。</li>
+      </ul>
+    </div>
+
+    <div class="block">
+      <h4><span class="mk">—</span> 作业</h4>
+      <div class="hw">
+        <p>每两天一个阶段，任选游戏或网站方向完成 1 份作业，反复迭代。</p>
+        <p class="dl">提交：网站/小程序交链接或录屏，说明解决了什么问题。</p>
+      </div>
+    </div>
+
+    <div class="block">
+      <h4><span class="mk">—</span> 资料与成品入口</h4>
+      <ul class="res">
+        <li class="res-sub">课程文档</li>
+        <li><a href="https://my.feishu.cn/docx/VheKd6MPeoWlg5x9xP4cR0sangd" target="_blank" rel="noopener">学员导航 · 录播 + 作业标准（总入口）</a><span class="dom">feishu</span></li>
+        <li><a href="https://xvvpm3mjicz.feishu.cn/docx/OMQIdFIeuoo3oSxsLimcbYz9nXg" target="_blank" rel="noopener">七夕网站实操教程 · 零基础入门</a><span class="dom">feishu</span></li>
+        <li><a href="https://my.feishu.cn/wiki/MohMw59OZi3xe3keRf8cl6lyn7g" target="_blank" rel="noopener">生活的 Vibe Coding：插件与工具 · 郁芜·心澈</a><span class="dom">feishu</span></li>
+        <li class="res-sub">游戏 · 学员成品</li>
+        <li><a href="https://screw-joy-courtyard.pages.dev/" target="_blank" rel="noopener">螺丝解解乐 · 庭院关卡</a><span class="dom">pages.dev</span></li>
+        <li><a href="https://zhaoyun-adou-h5-0817.a0981518978.chatgpt.site/" target="_blank" rel="noopener">赵云与阿斗 · H5 复刻</a><span class="dom">chatgpt.site</span></li>
+        <li><a href="https://arrow-arena-play-2026.haixuanchen463.chatgpt.site/game/" target="_blank" rel="noopener">箭阵竞技场</a><span class="dom">chatgpt.site</span></li>
+        <li><a href="https://odd-flower-e596.sureshkumar1981a.workers.dev/" target="_blank" rel="noopener">僵尸尖叫</a><span class="dom">workers.dev</span></li>
+        <li><a href="https://cloud-racer-mini-game.pages.dev/" target="_blank" rel="noopener">云端飞车 · 跑酷赛车</a><span class="dom">pages.dev</span></li>
+        <li class="res-sub">网站 · 学员成品</li>
+        <li><a href="https://0b283551952f44c7b1ca276570bfc0c0.app.workbuddy.link" target="_blank" rel="noopener">零基础网站入门 · 成果示例</a><span class="dom">workbuddy</span></li>
+        <li><a href="https://pixel-confession-story.pages.dev/" target="_blank" rel="noopener">像素告白故事 · 薛惠尔</a><span class="dom">pages.dev</span></li>
+        <li><a href="https://the-line.dog-angelfish.workers.dev/" target="_blank" rel="noopener">有限与无限的游戏 · 🦊</a><span class="dom">workers.dev</span></li>
+        <li><a href="https://qixi-team10-before-week4.a0981518978.chatgpt.site/" target="_blank" rel="noopener">十组的故事 · 赤の破滅</a><span class="dom">chatgpt.site</span></li>
+        <li><a href="https://glass-moth-escapee.netlify.app/" target="_blank" rel="noopener">游戏 PV 交互展映 · 云栖</a><span class="dom">netlify</span></li>
+        <li><a href="https://archive.yunsheng.ccwu.cc/#" target="_blank" rel="noopener">个人影像项目档案 · 允升</a><span class="dom">ccwu.cc</span></li>
+        <li><a href="https://xuequeen-storyboard-learning-desk-cn.pages.dev/" target="_blank" rel="noopener">分镜学习工具 · 雪雪</a><span class="dom">pages.dev</span></li>
+        <li><a href="https://network-wonders-after.pages.dev/#why" target="_blank" rel="noopener">网络世界 · 流沙</a><span class="dom">pages.dev</span></li>
+        <li><a href="https://shanhe-flavors.cintioemerson900.chatgpt.site/" target="_blank" rel="noopener">山河风味 · 祥云</a><span class="dom">chatgpt.site</span></li>
+        <li><a href="https://friend-letter-20260820.phamnam2009hp.chatgpt.site/" target="_blank" rel="noopener">写给朋友 · 小岛</a><span class="dom">chatgpt.site</span></li>
+        <li><a href="https://0ef20201a59546889a9bd4bc4bc87642.app.workbuddy.link/" target="_blank" rel="noopener">氛围交互网页 · 常乐</a><span class="dom">workbuddy</span></li>
+        <li><a href="https://nick-fox.pages.dev/1/" target="_blank" rel="noopener">FOX26 作品集 · Nick_fox</a><span class="dom">pages.dev</span></li>
+        <li><a href="https://mufeng-fragrance.pages.dev/" target="_blank" rel="noopener">东方四季香氛 · 牧风</a><span class="dom">pages.dev</span></li>
+        <li><a href="https://hhh416873-gif.github.io/" target="_blank" rel="noopener">星笺 · 晨霞</a><span class="dom">github.io</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 第三周 -->
+  <section class="week">
+    <div class="week-head">
+      <span class="w-no">第 3 周</span>
+      <h2>视频周</h2>
+      <span class="w-date">8/28 – 9/5</span>
+      <div class="w-thesis">从一张海报做出第一条 AI 视频——seedance（AIGC）与 coding 两条线并行。</div>
+    </div>
+    <div class="meta"><b>讲师</b>　泽央、鲨鲨、年年（AIGC 线）；王嘉恒、满是风、小黄（coding 线）</div>
+
+    <div class="block">
+      <h4><span class="mk">—</span> 课程安排（DAY1 – DAY7）</h4>
+      <div class="schedule">
+        <div class="sched-row"><span class="day">Day 1</span><span class="who">泽央</span><span class="what">万物皆可视频：从一张人像海报做出第一条人物概念视频。</span></div>
+        <div class="sched-row"><span class="day">Day 2</span><span class="who">鲨鲨</span><span class="what">AI 视频资产图：好资产才有好视频，做高质量能直接用的资产图。</span></div>
+        <div class="sched-row"><span class="day">Day 3</span><span class="who">年年 · 王嘉恒</span><span class="what">剧本与提示词构建（AIGC）；coding 视频闭环 0→1（coding）。</span></div>
+        <div class="sched-row"><span class="day">Day 4</span><span class="who">年年 · 小黄</span><span class="what">导演思维（AIGC）；代码视频底层逻辑与约束规则（coding）。</span></div>
+        <div class="sched-row"><span class="day">Day 5</span><span class="who">年年 · 满是风</span><span class="what">商单接单经验（AIGC）；用故事板分镜图做代码视频（coding）。</span></div>
+        <div class="sched-row"><span class="day">Day 6–7</span><span class="who">王嘉恒</span><span class="what">补作业、交独立成片；「从 0 到 1 之后怎么走」收官。</span></div>
+      </div>
+    </div>
+
+    <div class="block">
+      <h4><span class="mk">—</span> 讲义要点</h4>
+      <ul class="points">
+        <li>一条视频好不好看，在剧本和提示词就定了——先写清「谁、在哪、做什么」，再套提示词。</li>
+        <li>资产图决定成片：喂给 seedance 的图质量差，成片就差，先把资产图做扎实。</li>
+        <li>两条线并行：seedance（AIGC 生成，省力）与 coding（代码动画，逻辑与规则更可控）。</li>
+        <li>迭代精神最值钱：做两版、只改一个变量；变差也照实写，能说清为什么变差，比蒙对一版更值钱。</li>
+      </ul>
+    </div>
+
+    <div class="block">
+      <h4><span class="mk">—</span> 作业</h4>
+      <div class="hw">
+        <p>① 海报 → 概念视频，至少两版，只改一个变量，附迭代记录；</p>
+        <p>② 独立创作第一条 AI 视频（约 1 分钟，含剪辑与 BGM）。</p>
+        <p class="dl">提交：原始海报 + 两版视频 + 迭代说明。</p>
+      </div>
+    </div>
+
+    <div class="block">
+      <h4><span class="mk">—</span> 资料入口</h4>
+      <ul class="res">
+        <li><a href="https://bcna63i1999z.feishu.cn/wiki/QWZKw33Rnipt1wkEA80cmQw3nvh" target="_blank" rel="noopener">DAY1 学员导航 · 录播 + 作业标准</a><span class="dom">feishu</span></li>
+        <li><a href="https://ocngmsdf1a8o.feishu.cn/wiki/OaZcwYbbfiKdVqkbpfhcJIVdnRf" target="_blank" rel="noopener">DAY2 资产图课程 · 鲨鲨</a><span class="dom">feishu</span></li>
+        <li><a href="https://nijie-0l.github.io/aigc-background-course/" target="_blank" rel="noopener">DAY2 资产图课件网站</a><span class="dom">github.io</span></li>
+        <li><a href="https://ecn4uuxpufae.feishu.cn/wiki/EHd8wnmX9itWU3kkh4Dc6V0FnRb" target="_blank" rel="noopener">DAY3 剧本与提示词 · 年年</a><span class="dom">feishu</span></li>
+        <li><a href="https://my.feishu.cn/wiki/YxAsw1spBimWxBktZlKcsV0Vntd" target="_blank" rel="noopener">DAY3 coding 视频闭环 · 王嘉恒</a><span class="dom">feishu</span></li>
+        <li><a href="https://ecn4uuxpufae.feishu.cn/wiki/XpMKwB9D6ifw0Kk5M78cpHO3nEd" target="_blank" rel="noopener">DAY4 导演思维 · 年年</a><span class="dom">feishu</span></li>
+        <li><a href="https://my.feishu.cn/wiki/PNkuwjqlCiPq3dk2rWncyzp0nlK" target="_blank" rel="noopener">DAY4 代码视频底层逻辑 · 小黄</a><span class="dom">feishu</span></li>
+        <li><a href="https://gi38ymy3kfw.feishu.cn/wiki/Zj0ywEIpFitw9OkuWPmcscBcnGd" target="_blank" rel="noopener">DAY5 故事板分镜图 · 满是风</a><span class="dom">feishu</span></li>
+        <li><a href="https://my.feishu.cn/docx/CnLLdsb5Eoc1J1xJPCgcQzrwnzb" target="_blank" rel="noopener">DAY7 从 0 到 1 之后怎么走 · 王嘉恒</a><span class="dom">feishu</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 第四周 -->
+  <section class="week">
+    <div class="week-head">
+      <span class="w-no">第 4 周</span>
+      <h2>文案周</h2>
+      <span class="w-date">9/7 – 9/15</span>
+      <div class="w-thesis">围绕「语言是全损压缩」写文案，配「树林哥」音色配音成片，发出去。</div>
+    </div>
+    <div class="meta"><b>讲师</b>　组长（发布作业）、文案组长（28 组 + 3 组，逐条点评）</div>
+
+    <div class="block">
+      <h4><span class="mk">—</span> 讲义要点</h4>
+      <ul class="points">
+        <li>《语言是全损压缩》的核心：话一说出口，就丢了说话人脑子里的完整意思——语言传递信息必然有损。文案要选「丢得最少、传得最准」的那几句。</li>
+        <li>先完成再完美：先发出去，别卡在开头。</li>
+        <li>站在观众角度：想这条文案对观众产生什么积极影响，而不是「我想表达什么」。</li>
+        <li>发公众平台更容易有流量；活学活用视频周——剪映导 srt 字幕扔给 Codex。</li>
+      </ul>
+    </div>
+
+    <div class="block">
+      <h4><span class="mk">—</span> 两次作业</h4>
+      <div class="hw">
+        <p>① 围绕《语言是全损压缩》写文案（资料为两份 PDF）。</p>
+        <p class="dl">截止：<b>9/8 晚 22:00</b>，截图交给组长。</p>
+        <p style="margin-top:10px">② 文案 + 配音成片，用「树林哥」音色，发到公众平台。</p>
+        <p class="dl">截止：<b>9/15（周二）晚 22:00</b>，之后不算打卡；发群里或私发组长。</p>
+      </div>
+    </div>
+
+    <div class="block">
+      <h4><span class="mk">—</span> 工具</h4>
+      <div class="schedule">
+        <div class="sched-row"><span class="day">配音</span><span class="who">洋</span><span class="what">「配音工具包-重装版.zip」——质检必须下载。</span></div>
+        <div class="sched-row"><span class="day">音色</span><span class="who">组员经验</span><span class="what">用小米 mimo 反复调，配出「树林哥」音色。</span></div>
+      </div>
+    </div>
+
+    <div class="block">
+      <h4><span class="mk">—</span> 资料入口</h4>
+      <ul class="res">
+        <li class="res-sub">微信文件 · 需从聊天记录提取</li>
+        <li><span class="file">《语言是全损压缩》讲义 · 两份 PDF</span></li>
+        <li><span class="file">配音工具包-重装版.zip（质检必下）</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <p><b>收束</b>：图片、技术、视频、文案四条路，最终都汇到同一句话——把脑子里的想法可视化，先做出来、再改好、再发出去、再变现。</p>
+  </footer>
+
+</div>
+</body>
+</html>
